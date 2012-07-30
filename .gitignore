@@ -3,6 +3,7 @@ target
 .classpath
 .project
 .settings
+.externalToolBuilders
 
 # Package Files #
 *.jar
