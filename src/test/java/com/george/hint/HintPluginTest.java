@@ -35,7 +35,7 @@ public class HintPluginTest extends AbstractShellTest
    }
 
    @Test
-   public void testDefaultCommand() throws Exception
+   public void testNoProject() throws Exception
    {
       getShell().execute("forge");
       System.out.println("OUTPUT: "+getOutput());

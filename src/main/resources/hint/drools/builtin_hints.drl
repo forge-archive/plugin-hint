@@ -1,0 +1,42 @@
+//created on: Jul 30, 2012
+package hint.drools
+
+import com.george.hint.impl.DroolsHintHolder;
+
+rule "No Project informed"
+    when
+   		$dhh: DroolsHintHolder(projectAvailable == true)
+    then
+    	$dhh.setOutput("start_noproject");
+end
+
+rule "Web"
+	when
+		$dhh : DroolsHintHolder(
+			this.hasFacet("org.jboss.forge.project.facets.WebResourceFacet")
+		)
+	then
+		$dhh.setOutput("persistence");
+end
+
+rule "Web + Persistence"
+	when
+		$dhh : DroolsHintHolder(
+			this.hasFacet("org.jboss.forge.project.facets.WebResourceFacet") &&
+			this.hasFacet("org.jboss.forge.spec.javaee.PersistenceFacet")
+		)
+	then
+		$dhh.setOutput("scaffold");
+end
+
+rule "Web + Persistence + Scaffold"
+	when
+		$dhh : DroolsHintHolder(
+			this.hasFacet("org.jboss.forge.project.facets.WebResourceFacet") &&
+			this.hasFacet("org.jboss.forge.spec.javaee.PersistenceFacet") &&
+			this.containsFile("src/main/webapp/index.html")
+		)
+	then
+		$dhh.setOutput("done");
+end
+

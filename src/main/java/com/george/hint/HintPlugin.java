@@ -48,7 +48,7 @@ import org.jboss.forge.shell.project.ProjectScoped;
 public class HintPlugin implements Plugin
 {
 
-   private static final String HINTS_MESSAGES = "org.jboss.forge.plugins.hint_messages";
+   private static final String HINTS_MESSAGES = "hint.messages.hint_messages";
 
 //   private static final String HINTS_ENABLED_FLAG = "HINTS.ENABLED";
 
