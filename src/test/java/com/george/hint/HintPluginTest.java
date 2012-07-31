@@ -21,24 +21,73 @@
  */
 package com.george.hint;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.test.AbstractShellTest;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class HintPluginTest extends AbstractShellTest
 {
+
+   private static ResourceBundle bundle;
+
    @Deployment
    public static JavaArchive getDeployment()
    {
       return AbstractShellTest.getDeployment().addPackages(true, HintPlugin.class.getPackage());
    }
 
+   @BeforeClass
+   public static void before()
+   {
+      bundle = ResourceBundle.getBundle("hint.messages.hint_messages", Locale.getDefault(), Thread.currentThread()
+               .getContextClassLoader());
+   }
+
    @Test
    public void testNoProject() throws Exception
    {
-      getShell().execute("forge");
-      System.out.println("OUTPUT: "+getOutput());
+      getShell().execute("hint");
+      Assert.assertTrue(getOutput().contains(bundle.getString("start_noproject")));
    }
 
+   @Test
+   public void testProjectNoPersistence() throws Exception
+   {
+      initializeJavaProject();
+      getShell().execute("hint");
+      System.out.println(getOutput());
+      Assert.assertTrue(getOutput().contains(bundle.getString("persistence")));
+   }
+
+   @Test
+   public void testProjectPersistenceNoScaffold() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("", "");
+      getShell().execute("persistence setup --provider HIBERNATE --container JBOSS_AS7");
+      getShell().execute("hint");
+      System.out.println(getOutput());
+
+      Assert.assertTrue(getOutput().contains(bundle.getString("scaffold")));
+   }
+
+   @Test
+   public void testProjectPersistenceScaffold() throws Exception
+   {
+      initializeJavaProject();
+      queueInputLines("", "");
+      getShell().execute("persistence setup --provider HIBERNATE --container JBOSS_AS7");
+      queueInputLines("", "", "");
+      getShell().execute("scaffold setup --scaffoldType faces");
+      getShell().execute("hint");
+      System.out.println(getOutput());
+
+      Assert.assertTrue(getOutput().contains(bundle.getString("done")));
+   }
 }

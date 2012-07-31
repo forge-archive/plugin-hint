@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.DefaultCommand;
 import org.jboss.forge.shell.plugins.Plugin;
@@ -50,7 +51,7 @@ public class HintPlugin implements Plugin
 
    private static final String HINTS_MESSAGES = "hint.messages.hint_messages";
 
-//   private static final String HINTS_ENABLED_FLAG = "HINTS.ENABLED";
+   // private static final String HINTS_ENABLED_FLAG = "HINTS.ENABLED";
 
    /**
     * We need to create this object after each executed command
@@ -67,55 +68,30 @@ public class HintPlugin implements Plugin
    @Inject
    private BeanManager beanManager;
 
-
    /*
-   @DefaultCommand
-   public void displayHintStatus()
-   {
-      boolean enabled = isEnabled();
-      shell.println("Hints are "
-               + (enabled ? "enabled. To disable hints, type 'hint off'" : "disabled. To enable hints, type 'hint on'"));
-   }
-
-   @Command("on")
-   public void enableHints()
-   {
-      setEnabled(true);
-      displayHintStatus();
-   }
-
-   @Command("off")
-   public void disableHints()
-   {
-      setEnabled(false);
-      displayHintStatus();
-   }
-
-   private boolean isEnabled()
-   {
-      Object hintsEnabled = shell.getEnvironment().getProperty(HINTS_ENABLED_FLAG);
-      return hintsEnabled == null ? false : Boolean.parseBoolean(hintsEnabled.toString());
-   }
-
-   private void setEnabled(boolean enabled)
-   {
-      shell.getEnvironment().setProperty(HINTS_ENABLED_FLAG, enabled);
-   }
-
-   public void observesAfterExecution(@Observes CommandExecuted event)
-   {
-      showProjectHint();
-   }
-   */
+    * @DefaultCommand public void displayHintStatus() { boolean enabled = isEnabled(); shell.println("Hints are " +
+    * (enabled ? "enabled. To disable hints, type 'hint off'" : "disabled. To enable hints, type 'hint on'")); }
+    *
+    * @Command("on") public void enableHints() { setEnabled(true); displayHintStatus(); }
+    *
+    * @Command("off") public void disableHints() { setEnabled(false); displayHintStatus(); }
+    *
+    * private boolean isEnabled() { Object hintsEnabled = shell.getEnvironment().getProperty(HINTS_ENABLED_FLAG); return
+    * hintsEnabled == null ? false : Boolean.parseBoolean(hintsEnabled.toString()); }
+    *
+    * private void setEnabled(boolean enabled) { shell.getEnvironment().setProperty(HINTS_ENABLED_FLAG, enabled); }
+    *
+    * public void observesAfterExecution(@Observes CommandExecuted event) { showProjectHint(); }
+    */
 
    @DefaultCommand
    public void showProjectHint()
    {
       // If this plugin is disabled, do nothing
-//      if (!isEnabled())
-//      {
-//         return;
-//      }
+      // if (!isEnabled())
+      // {
+      // return;
+      // }
       Project project;
       // Check if ProjectScoped is active
       try
@@ -134,15 +110,16 @@ public class HintPlugin implements Plugin
          project = null;
       }
       String response = hintProvider.computeHint(project);
-      // Translate the response, if available
-      ResourceBundle bundle = ResourceBundle.getBundle(HINTS_MESSAGES, Locale.getDefault(),
-               getClass()
-                        .getClassLoader());
-      String translatedReponse = bundle.containsKey(response) ? bundle.getString(response) : response;
-      if (!Strings.isNullOrEmpty(translatedReponse))
+      if (!Strings.isNullOrEmpty(response))
       {
+         // Translate the response, if available
+         ResourceBundle bundle = ResourceBundle.getBundle(HINTS_MESSAGES, Locale.getDefault(),
+                  getClass()
+                           .getClassLoader());
+         String translatedReponse = bundle.containsKey(response) ? bundle.getString(response) : response;
          shell.println();
-         shell.println(translatedReponse);
+         shell.println(ShellColor.ITALIC,translatedReponse);
+         shell.println();
       }
    }
 }

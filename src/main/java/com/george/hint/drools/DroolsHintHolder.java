@@ -1,4 +1,4 @@
-package com.george.hint.impl;
+package com.george.hint.drools;
 
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
@@ -44,7 +44,7 @@ public class DroolsHintHolder
    @SuppressWarnings("unchecked")
    public boolean hasFacet(String facetClassName)
    {
-      if (project == null)
+      if (!isProjectAvailable())
       {
          return false;
       }

@@ -1,4 +1,4 @@
-package com.george.hint.impl;
+package com.george.hint.drools;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -25,9 +25,9 @@ import com.george.hint.HintProvider;
 public class DroolsHintProvider implements HintProvider
 {
 
-   private KnowledgeBase base = readKnowledgeBase();
+   private KnowledgeBase base;
 
-   private static KnowledgeBase readKnowledgeBase()
+   public KnowledgeBase readKnowledgeBase()
    {
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
       kbuilder.add(ResourceFactory.newClassPathResource("hint/drools/builtin_hints.drl"), ResourceType.DRL);
@@ -48,6 +48,9 @@ public class DroolsHintProvider implements HintProvider
    @Override
    public String computeHint(Project project)
    {
+      if (base == null) {
+         base = readKnowledgeBase();
+      }
       DroolsHintHolder holder = new DroolsHintHolder(project);
       StatefulKnowledgeSession session = base.newStatefulKnowledgeSession();
       session.insert(holder);

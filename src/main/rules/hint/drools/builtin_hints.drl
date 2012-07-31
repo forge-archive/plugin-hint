@@ -1,19 +1,20 @@
 //created on: Jul 30, 2012
 package hint.drools
 
-import com.george.hint.impl.DroolsHintHolder;
+import com.george.hint.drools.DroolsHintHolder;
 
 rule "No Project informed"
     when
-   		$dhh: DroolsHintHolder(projectAvailable == true)
+   		$dhh: DroolsHintHolder(projectAvailable == false)
     then
     	$dhh.setOutput("start_noproject");
 end
 
-rule "Web"
+rule "No Persistence"
 	when
 		$dhh : DroolsHintHolder(
-			this.hasFacet("org.jboss.forge.project.facets.WebResourceFacet")
+			projectAvailable == true &&
+			!this.hasFacet("org.jboss.forge.spec.javaee.PersistenceFacet")
 		)
 	then
 		$dhh.setOutput("persistence");
@@ -22,7 +23,7 @@ end
 rule "Web + Persistence"
 	when
 		$dhh : DroolsHintHolder(
-			this.hasFacet("org.jboss.forge.project.facets.WebResourceFacet") &&
+			projectAvailable == true &&
 			this.hasFacet("org.jboss.forge.spec.javaee.PersistenceFacet")
 		)
 	then
