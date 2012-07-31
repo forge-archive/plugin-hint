@@ -52,6 +52,7 @@ public class HintPluginTest extends AbstractShellTest
    @Test
    public void testNoProject() throws Exception
    {
+      getShell().execute("cd ..");
       getShell().execute("hint");
       Assert.assertTrue(getOutput().contains(bundle.getString("start_noproject")));
    }
@@ -61,7 +62,6 @@ public class HintPluginTest extends AbstractShellTest
    {
       initializeJavaProject();
       getShell().execute("hint");
-      System.out.println(getOutput());
       Assert.assertTrue(getOutput().contains(bundle.getString("persistence")));
    }
 
@@ -72,8 +72,6 @@ public class HintPluginTest extends AbstractShellTest
       queueInputLines("", "");
       getShell().execute("persistence setup --provider HIBERNATE --container JBOSS_AS7");
       getShell().execute("hint");
-      System.out.println(getOutput());
-
       Assert.assertTrue(getOutput().contains(bundle.getString("scaffold")));
    }
 

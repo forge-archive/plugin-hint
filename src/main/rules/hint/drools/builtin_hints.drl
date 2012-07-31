@@ -24,7 +24,8 @@ rule "Web + Persistence"
 	when
 		$dhh : DroolsHintHolder(
 			projectAvailable == true &&
-			this.hasFacet("org.jboss.forge.spec.javaee.PersistenceFacet")
+			this.hasFacet("org.jboss.forge.spec.javaee.PersistenceFacet") &&
+			!this.containsFile("src/main/webapp/index.html")
 		)
 	then
 		$dhh.setOutput("scaffold");
@@ -33,6 +34,7 @@ end
 rule "Web + Persistence + Scaffold"
 	when
 		$dhh : DroolsHintHolder(
+			projectAvailable == true &&
 			this.hasFacet("org.jboss.forge.project.facets.WebResourceFacet") &&
 			this.hasFacet("org.jboss.forge.spec.javaee.PersistenceFacet") &&
 			this.containsFile("src/main/webapp/index.html")
