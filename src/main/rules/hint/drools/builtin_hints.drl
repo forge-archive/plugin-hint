@@ -1,7 +1,7 @@
 //created on: Jul 30, 2012
 package hint.drools
 
-import com.george.hint.drools.DroolsHintHolder;
+import org.jboss.forge.plugin.hint.impl.DroolsHintHolder;
 
 rule "No Project informed"
     when

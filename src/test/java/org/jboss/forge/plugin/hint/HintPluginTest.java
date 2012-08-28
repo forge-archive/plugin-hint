@@ -19,12 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.george.hint;
+package org.jboss.forge.plugin.hint;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.forge.plugin.hint.HintPlugin;
 import org.jboss.forge.test.AbstractShellTest;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;

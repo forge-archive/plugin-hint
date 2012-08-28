@@ -1,6 +1,9 @@
-package com.george.hint.drools;
+package org.jboss.forge.plugin.hint.impl;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
@@ -11,9 +14,8 @@ import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
-import org.jboss.forge.project.Project;
-
-import com.george.hint.HintProvider;
+import org.jboss.forge.plugin.hint.api.HintRequestEvent;
+import org.jboss.forge.plugin.hint.api.KnowledgeBaseHintBuildEvent;
 
 /**
  * A Hint Provider that uses Drools as the rule engine
@@ -22,15 +24,32 @@ import com.george.hint.HintProvider;
  *
  */
 @ApplicationScoped
-public class DroolsHintProvider implements HintProvider
+public class DroolsHintProvider
 {
 
    private KnowledgeBase base;
 
+   @Inject
+   private Event<KnowledgeBaseHintBuildEvent> event;
+
+   public void onHintRequested(@Observes HintRequestEvent evt)
+   {
+      if (base == null)
+      {
+         base = readKnowledgeBase();
+      }
+      DroolsHintHolder holder = new DroolsHintHolder(evt.getProject());
+      StatefulKnowledgeSession session = base.newStatefulKnowledgeSession();
+      session.insert(holder);
+      session.fireAllRules();
+      evt.setHint(holder.getOutput());
+   }
+
    public KnowledgeBase readKnowledgeBase()
    {
       KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-      kbuilder.add(ResourceFactory.newClassPathResource("hint/drools/builtin_hints.drl"), ResourceType.DRL);
+      KnowledgeBaseHintBuildEvent evt = new KnowledgeBaseHintBuildEvent(kbuilder);
+      event.fire(evt);
       KnowledgeBuilderErrors errors = kbuilder.getErrors();
       if (errors.size() > 0)
       {
@@ -43,18 +62,5 @@ public class DroolsHintProvider implements HintProvider
       KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
       kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
       return kbase;
-   }
-
-   @Override
-   public String computeHint(Project project)
-   {
-      if (base == null) {
-         base = readKnowledgeBase();
-      }
-      DroolsHintHolder holder = new DroolsHintHolder(project);
-      StatefulKnowledgeSession session = base.newStatefulKnowledgeSession();
-      session.insert(holder);
-      session.fireAllRules();
-      return holder.getOutput();
    }
 }

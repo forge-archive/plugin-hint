@@ -1,4 +1,4 @@
-package com.george.hint.drools;
+package org.jboss.forge.plugin.hint.impl;
 
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.Project;
